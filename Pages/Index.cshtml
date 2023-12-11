@@ -1,0 +1,78 @@
+﻿@page
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<AppUser> SignInManager
+@inject UserManager<AppUser> UserManager
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $("#checkAll").click(function () {
+                $("input[name='usersId']").attr("checked", this.checked)
+            });
+
+            $("input[name=usersId").click(function () {
+                if ($("input[name='usersId']").length == $("input[name='usersId']:checked").length) {
+                    $("#checkAll").attr("checked", "checked")
+                } else {
+                    $("#checkAll").removeAttr("checked")
+                }
+            });
+
+        });
+    </script>
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+@if (!SignInManager.IsSignedIn(User))
+{
+    <h2>Please, log in to manage users.</h2>
+}
+else
+{
+    <form asp-action="post">
+        <button type="submit" formaction="@Url.Page("Index", "Block")" formmethod="post" value="Block" class="btn btn-warning">
+            <i class="bi bi-lock-fill"></i>
+        </button>
+        <button type="submit" formaction="@Url.Page("Index", "UnBlock")" formmethod="post" value="UnBlock" class="btn btn-success">
+            <i class="bi bi-unlock-fill"></i>
+        </button>
+        <button type="submit" formaction="@Url.Page("Index", "Delete")" formmethod="post" value="Delete" class="btn btn-danger">
+            <i class="bi bi-trash"></i>
+        </button>
+        
+        <table id="usersTable" class="table table-responsive hover">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" id="checkAll" class="form-check-input" /></th>
+                    <th>Full name</th>
+                    <th>Email</th>
+                    <th>Last login time</th>
+                    <th>Registration time</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="tbody">
+                @foreach (var user in UserManager.Users)
+                {
+                    <tr>
+                        <td><input type="checkbox" class="form-check-input" name="usersId" value="@user.Id" /></td>
+                        <td>@user.FullName</td>
+                        <td>@user.Email</td>
+                        <td>@user.LastLoginTime</td>
+                        <td>@user.RegistrationTime</td>
+                        <td>@user.BlockedStatus</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </form>
+}
+
+
+
+
+
+
